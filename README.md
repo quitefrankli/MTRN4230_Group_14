@@ -8,7 +8,7 @@
 
 
 ## ToDo:
-* Convert python script into proper ROS receiver node (don't need to modify current script)
+* Convert python script into proper ROS receiver node (the current script can be *resused*)
 * Camera
 * UR5 Kinematics
 
@@ -19,3 +19,4 @@
 3. `catkin_make`
 4. `source devel/setup.bash`
 5. `roslaunch ur5_t2_4230 ur5_world.launch`
+6. `python src/ur5_t2_4230/spawn_objects.py`

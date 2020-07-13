@@ -8,13 +8,22 @@
 
 import tf
 import rospy
-# import typing
+#import typing
 from std_msgs.msg import String
-from gazebo_msgs.srv import SpawnModel, DeleteModel
-from geometry_msgs.msg import Pose, Point, Quaternion
+from gazebo_msgs.srv import SpawnModel, DeleteModel, ApplyBodyWrench
+from geometry_msgs.msg import Pose, Point, Quaternion, Wrench, Vector3
+#from forces_torques.srv import *
 
 def test():
     print("hi")
+
+def apply_body_wrench_client(body_name, reference_frame, reference_point, wrench, start_time, duration):
+        rospy.wait_for_service('/gazebo/apply_body_wrench')
+        try:
+            apply_body_wrench = rospy.ServiceProxy('/gazebo/apply_body_wrench', ApplyBodyWrench)
+            apply_body_wrench(body_name, reference_frame, reference_point, wrench, start_time, duration)
+        except rospy.ServiceException, e:
+            print "Service call failed: %s"%e
 
 class URDF_Object:
     orientation = Quaternion(0, 0, 0, 0)
@@ -55,11 +64,15 @@ class SDF_Object:
             self.spawn_model(node_name, xml, '', pose, 'world')
 
 def main():
+    reference_point = Point(x = 0, y = 0, z = 0)
+    t = rospy.Time(50)
+    durations = rospy.Duration(-10)
     print("Waiting for gazebo services...")
     rospy.init_node("spawn_products_in_bins")
     rospy.wait_for_service("gazebo/spawn_urdf_model")
     rospy.wait_for_service("gazebo/spawn_sdf_model")
     rospy.wait_for_service("gazebo/delete_model")
+    rospy.wait_for_service("gazebo/apply_body_wrench")
     print("Got it.")
 
     pose = Pose(Point(0.25, 0, 0.1), Quaternion(0, 1, 0, -1))
@@ -70,6 +83,8 @@ def main():
     red_box = URDF_Object('red_box', 'red_box', Point(0, 0, 0.2))
     green_box = URDF_Object('green_box', 'green_box', Point(0, -0.2, 0.2))
     blue_box = URDF_Object('blue_box', 'blue_box', Point(0, 0.2, 0.2))
+    wrench = Wrench(force = Vector3( x = -20.1, y = 0, z = 0), torque = Vector3( x = 0, y = 0, z = 0))
+    apply_body_wrench_client(red_box,'world',reference_point,wrench,t, durations)
 
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@
 
 import tf
 import rospy
-import typing
+# import typing
 from std_msgs.msg import String
 from gazebo_msgs.srv import SpawnModel, DeleteModel
 from geometry_msgs.msg import Pose, Point, Quaternion

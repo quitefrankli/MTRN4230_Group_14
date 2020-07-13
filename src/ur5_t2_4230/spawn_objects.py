@@ -70,6 +70,13 @@ def main():
     red_box = URDF_Object('red_box', 'red_box', Point(0, 0, 0.2))
     green_box = URDF_Object('green_box', 'green_box', Point(0, -0.2, 0.2))
     blue_box = URDF_Object('blue_box', 'blue_box', Point(0, 0.2, 0.2))
+    rate = rospy.Rate(10) # 10hz
+
+    while not rospy.is_shutdown():
+        URDF_Object('green_box %s' % rospy.get_time(), 'green_box', Point(0, -0.2, 0.2))
+        hello_str = "hello world %s" % rospy.get_time()
+        rospy.loginfo(hello_str)
+        rate.sleep()
 
 
 if __name__ == '__main__':

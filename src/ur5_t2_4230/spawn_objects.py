@@ -71,9 +71,9 @@ def main():
     # Quaternion is not being used
     input_container_x = 0.25
     input_container_y = 0
-    input_container = SDF_Object('input_container', 'container', Pose(
+    input_container = SDF_Object('input_container', 'input_container', Pose(
         Point(input_container_x, input_container_y, 0.1), Quaternion(0, 1, 0, -1)))
-    output_container = SDF_Object('output_container', 'container', Pose(
+    output_container = SDF_Object('output_container', 'output_container', Pose(
         Point(0, 2, 0.1), Quaternion(0, 1, 0, -1)))
 
     object_list = ['red_box', 'green_box', 'blue_box',

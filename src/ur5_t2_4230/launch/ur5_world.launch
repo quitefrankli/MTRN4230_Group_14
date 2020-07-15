@@ -14,7 +14,7 @@
 	<arg name = "link_name" default = "world"/>
 
 	<!-- Call the python script on launch. CHMOD 777 if doesnt work -->
-	<node name="spawn_environment" pkg="ur5_t2_4230" type="spawn_objects.py" output="screen"/>
+	<!-- <node name="spawn_environment" pkg="ur5_t2_4230" type="spawn_objects.py" output="screen"/> -->
 
 	<!-- include gazebo_ros launcher -->
 	<include file="$(find gazebo_ros)/launch/empty_world.launch">

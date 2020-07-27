@@ -11,7 +11,8 @@
     </include>
     <include>
       <uri>model://kinect_ros</uri>
-      <pose>1 1 1 0.000000 0 0</pose>
+      <pose>0.013337 -0.025445 1.130017 1.5 1.5 1.5</pose>
+      <static>1</static>
     </include>
     <!-- Own physics settings to speed up simulation -->
     <physics type='ode'>

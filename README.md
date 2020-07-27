@@ -1,6 +1,9 @@
 # MTRN4230 Group 14 Project
 # UR5-ROS-Gazebo 
 
+## Required Lib
+pip install opencv-python
+
 ## Current Status
 * Preliminary basic environment 1 input container, 1 output container and 3 objects
 ![](environment.png)

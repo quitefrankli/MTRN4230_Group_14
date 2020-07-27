@@ -1,13 +1,14 @@
 # MTRN4230 Group 14 Project
 # UR5-ROS-Gazebo 
 
-## Required Lib
+## Required Additional Library
 pip install opencv-python
+
 
 ## Current Status
 * Preliminary basic environment 1 input container, 1 output container and 3 objects
 ![](environment.png)
-
+* Basic moveit code setup. Run `$python testmoveit.py`
 
 
 ## ToDo:

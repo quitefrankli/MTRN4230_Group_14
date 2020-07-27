@@ -24,8 +24,7 @@
 		<arg name="paused" value="$(arg pause)" />
 		<arg name="use_sim_time" value="true" />
 	</include>
-
-	<!-- spwan ur5 -->
+	<!-- spawn ur5 -->
 	<!-- send robot urdf to param server -->
 	<include file="$(find ur_description)/launch/ur5_upload.launch">
 		<arg name="limited" value="$(arg limited)"/>
@@ -42,6 +41,10 @@
 	<!-- Remap follow_joint_trajectory -->
 	<remap if="$(arg sim)" from="/follow_joint_trajectory" to="/arm_controller/follow_joint_trajectory"/>
 
-	<!-- the red blocks spawner node -->
-	<!-- <node name="blocks_spawner" pkg="ur5_t2_4230" type="blocks_spawner" output="screen" /> -->
+	<!-- Launch moveit -->
+	<include file="$(find ur5_moveit_config)/launch/move_group.launch">
+		<arg name="limited" default="$(arg limited)"/>
+		<arg name="debug" default="$(arg debug)" />
+	</include>
+
 </launch>

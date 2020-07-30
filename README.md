@@ -2,25 +2,24 @@
 # UR5-ROS-Gazebo 
 
 ## Required Additional Library
-pip install opencv-python
-
+* `pip install opencv-python`
 
 ## Current Status
 * Preliminary basic environment 1 input container, 1 output container and 10 objects
 ![](environment.png)
-* Basic moveit code setup. Run `$python testmoveit.py`
-
-
-## ToDo:
-* Convert python script into proper ROS receiver node (the current script can be *resused*)
-* Camera
-* UR5 Kinematics
-
+* Basic kinematics
+* Raw image data
 
 ## Installation and Running
-1. `mkdir group_project & cd group_project`
-2. `git clone https://github.com/quitefrankli/MTRN4230_Group_14`
+1. `git clone https://github.com/quitefrankli/MTRN4230_Group_14`
+2. `cd MTRN4230_Group_14`
 3. `catkin_make`
 4. `source devel/setup.bash`
 5. `roslaunch ur5_t2_4230 ur5_world.launch`
-6. `python src/ur5_t2_4230/spawn_objects.py`
+
+### For basic motion
+* `python src/ur5_t2_4230/kinematics.py`
+* if robot collides with something and gets stuck ---> `python src/ur5_t2_4230/testmotion.py`
+
+### For basic vision
+* `python src/ur5_t2_4230/read_image.py`

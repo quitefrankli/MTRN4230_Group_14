@@ -138,17 +138,28 @@ def main():
     print('demonstrating inverse kinematics...')
     rospy.sleep(3)
 
+    kinematics.fk(angle_up*2)
     pos1 = Pose(Point(0.5, 0.5, 0.5), Quaternion())
     print(pos1)
     kinematics.ik(pos1)
-
+    
+    rospy.sleep(1)
+    kinematics.fk(angle_up*2)
     pos2 = Pose(Point(0.2, -0.6, 0.3), Quaternion())
     print(pos2)
     kinematics.ik(pos2)
 
-    print('demonstrating pathing...')
-    rospy.sleep(3)
-    print('UNIMPLEMENTED')
+    rospy.sleep(1)
+    kinematics.fk(angle_up*2)
+    pos3 = Pose(Point(-0.3, 0.2, 0.4), Quaternion())
+    print(pos3)
+    kinematics.ik(pos3)
+
+    rospy.sleep(1)
+    kinematics.fk(angle_up*2)
+    pos4 = Pose(Point(0, 0.4, 0.6), Quaternion())
+    print(pos4)
+    kinematics.ik(pos4)
 
 if __name__ == '__main__':
   try:

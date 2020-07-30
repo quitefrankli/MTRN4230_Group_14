@@ -6,7 +6,7 @@ pip install opencv-python
 
 
 ## Current Status
-* Preliminary basic environment 1 input container, 1 output container and 3 objects
+* Preliminary basic environment 1 input container, 1 output container and 10 objects
 ![](environment.png)
 * Basic moveit code setup. Run `$python testmoveit.py`
 

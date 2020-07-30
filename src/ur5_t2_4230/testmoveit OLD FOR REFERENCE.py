@@ -76,10 +76,9 @@ def all_close(goal, actual, tolerance):
 
   return True
 
-class MoveGroupPythonIntefaceTutorial(object):
+class MoveGroupPythonIntefaceTutorial():
   """MoveGroupPythonIntefaceTutorial"""
   def __init__(self):
-    super(MoveGroupPythonIntefaceTutorial, self).__init__()
 
     ## BEGIN_SUB_TUTORIAL setup
     ##
@@ -440,10 +439,6 @@ def main():
     print "============ Press `Enter` to begin the tutorial by setting up the moveit_commander (press ctrl-d to exit) ..."
     raw_input()
     tutorial = MoveGroupPythonIntefaceTutorial()
-
-    print "============ Press `Enter` to execute a movement using a joint state goal ..."
-    raw_input()
-    tutorial.go_to_joint_state()
 
     print "============ Press `Enter` to execute a movement using a pose goal ..."
     raw_input()

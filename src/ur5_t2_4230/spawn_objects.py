@@ -13,13 +13,12 @@ from geometry_msgs.msg import Pose, Point, Quaternion
 import numpy
 
 
-class Static_Object:
+class Static_Object(object):
     MODEL_PATH = rospy.get_param('MODEL_PATH')
     delete_model = rospy.ServiceProxy("gazebo/delete_model", DeleteModel)
 
     def __init__(self, node_name, object_name, point, orient=Quaternion()):
         '''Args: str, str, Point, Point, Quaternion'''
-
         with open(self.MODEL_PATH + object_name + self.extension) as file:
             xml = file.read()
             self.spawn_model(node_name, xml, '', Pose(point, orient), 'world')
@@ -36,6 +35,30 @@ class SDF_Object(Static_Object):
     spawn_model = rospy.ServiceProxy("gazebo/spawn_sdf_model", SpawnModel)
     extension = '.sdf'
 
+class Random_Grid(object):
+    def __init__(self, cols, rows, origin, offset):
+        bottom_left = origin - offset
+        cell_size_x = (offset*2.0/float(cols-1))[0]
+        cell_size_y = (offset*2.0/float(rows-1))[1]
+
+        self.unused_coordinates = []
+        for col in range(cols):
+            for row in range(rows):
+                self.unused_coordinates.append(Point(
+                    (bottom_left + cell_size_x * col)[0],
+                    (bottom_left + cell_size_y * row)[1],
+                    origin[2]
+                ))
+        random.shuffle(self.unused_coordinates)
+
+    def __call__(self):
+        if not self.unused_coordinates:
+            raise Exception("TOO MANY OBJECTS")
+        return self.unused_coordinates.pop()
+
+def np_to_point(np_array):
+    return Point(np_array[0], np_array[1], np_array[2])
+
 def main():
     print("Waiting for gazebo services...")
     rospy.init_node("spawn_products_in_bins")
@@ -46,7 +69,7 @@ def main():
     input_container_y = 0.7
     container_orientation = Quaternion(0, 1, 0, -1)
     input_container_point = Point(0.2, input_container_y, 0.1)
-    output_container_point = Point(0.2, -0.7, 0.1)
+    output_container_point = Point(0.2, -input_container_y, 0.1)
 
     input_container = SDF_Object('input_container', 'input_container', 
         input_container_point, container_orientation)
@@ -58,56 +81,22 @@ def main():
 
     products = []
 
-    origin = numpy.array([0, input_container_y, 0.2])
-    offset = numpy.array([0.125, 0.25, 0])
+    origin = numpy.array([0, input_container_y, 0.1])
+    offset = numpy.array([0.13, 0.25, 0]) # offset in terms of container internal walls
 
-    num_products = 10
+    # actually the other way around swap row
+    rand_grid = Random_Grid(5, 7, origin, offset)
+
+    num_products = 30
     for i in range(num_products):
         products.append(URDF_Object(
             '_ProductNum ' + str(i),
             random.choice(object_list), 
-            get_random_coordinate(origin, offset)
+            rand_grid()
         ))
-
-
-# will add collision avoidance in the future
-def get_random_coordinate(origin, offset):
-    'origin: Point, offset: Point'
-    
-    dist = numpy.random.uniform(origin - offset, origin + offset)
-    return Point(dist[0], dist[1], dist[2])
 
 if __name__ == '__main__':
     try:
         main()
     except rospy.ROSInterruptException:
         pass
-
-# old code for reference
-    # spawns products in input container
-    # for i in range(10):
-    #     if len(used_coordinates) == 0:
-    #         x, y = get_randomized_xy()
-    #         choice = random.choice(object_list)
-    #         URDF_Object("object_%d" % (i), choice, Point(x, y, 0.2))
-    #         used_coordinates.append((x, y))
-    #         continue
-    #     found = False
-    #     while not found:
-    #         x, y = get_randomized_xy()
-    #         for coor in used_coordinates:
-    #             if ((x-0.025*2) <= coor[0] <= (x+0.025*2)) and ((y-0.025*2) <= coor[1] <= (y+0.025*2)):
-    #                 print("Collide")
-    #                 found = False
-    #                 break
-    #             else:
-    #                 found = True
-    #     choice = random.choice(object_list)
-    #     URDF_Object("object_%d" % (i), choice, Point(x, y, 0.2))
-    #     used_coordinates.append((x, y))
-
-# def get_randomized_xy():
-#     offset = 0.05
-#     y = random.uniform(-0.27305 + offset, 0.27305 - offset)
-#     x = random.uniform(-0.0675 + offset - 0.019050, 0.25 - offset - 0.019050)
-#     return x, y

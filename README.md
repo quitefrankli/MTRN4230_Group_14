@@ -7,8 +7,9 @@
 ## Current Status
 * Preliminary basic environment 1 input container, 1 output container and 10 objects
 ![](environment.png)
+* Object localisation and classification from robot camera
+![](object_localisation_and_classification.png)
 * Basic kinematics
-* Raw image data
 
 ## Installation and Running
 1. `git clone https://github.com/quitefrankli/MTRN4230_Group_14`
@@ -21,5 +22,5 @@
 * `python src/ur5_t2_4230/kinematics.py`
 * if robot collides with something and gets stuck ---> `python src/ur5_t2_4230/testmotion.py`
 
-### For basic vision
-* `python src/ur5_t2_4230/read_image.py`
+### For object detection
+* `python src/ur5_t2_4230/object_detection.py`

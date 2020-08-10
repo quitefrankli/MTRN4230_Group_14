@@ -9,6 +9,7 @@ import cv2
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
+import numpy as np
 
 
 class depth_image_converter:
@@ -23,10 +24,15 @@ class depth_image_converter:
     try:
       data.encoding = "32FC1"
       cv_image = self.bridge.imgmsg_to_cv2(data, "32FC1")
-      cv2.normalize(cv_image,cv_image,0,1,cv2.NORM_MINMAX)
+      print(np.max(cv_image))
+      print(np.min(cv_image))
+      print(cv_image.shape)
+      print(cv_image)
+      # cv2.normalize(cv_image,cv_image,0,1,cv2.NORM_MINMAX)
     except CvBridgeError as e:
       print(e)
-
+    # print(np.max(cv_image))
+    # print(np.min(cv_image))
     cv2.imshow("Depth Image", cv_image)
     cv2.waitKey(0)
 

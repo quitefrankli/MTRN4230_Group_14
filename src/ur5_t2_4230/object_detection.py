@@ -44,8 +44,7 @@ def find_objects(original_image):
     center = np.array([0, 0])
     for vertex in approximation:
       center += vertex[0]
-    center /= len(approximation)
-    center = tuple(np.round(center).astype(int))
+    center /= len(approximation) # local x, y
 
     # discern shape of contour
     if len(approximation) == 4: # cube
@@ -62,15 +61,32 @@ def find_objects(original_image):
     else:
       color = 'red'
 
-    cv2.circle(image, center, 5, (0, 0, 0))
-    cv2.putText(image, color+' '+name, center, cv2.FONT_HERSHEY_PLAIN, 0.5, (0, 255, 255), 1)
-    print(color, name, 'at', center)
+    cv2.circle(image, tuple(np.round(center).astype(int)), 5, (0, 0, 0))
+    cv2.putText(image, color+' '+name, 
+      tuple(np.round(center).astype(int)), 
+      cv2.FONT_HERSHEY_PLAIN, 0.5, (0, 255, 255), 1
+    )
+
+    #
+    # gets global center
+    #
+
+    # we know the center of the input container is at x=0,y=0.7
+    container_global_center = np.array([0, 0.7]) # global x, y
+    # we know the container is approx 0.5m long on the longer side
+    container_length = 0.5
+
+    scale = len(image[0])/container_length
+    container_center = np.array([len(image[0]), len(image)])/2 # local x, y
+
+    offset = (center - container_center)/scale
+    global_center = np.array([offset[1], offset[0]]) \
+      + container_global_center # global x, y
+    
+    print(color, name, 'at', global_center)
 
   cv2.imshow('image', image)
   cv2.waitKey(0)
-
-  # DONT FORGET TO TAKE INTO ACCOUNT THE CROPPING OFFSET
-
 
 class colour_image_converter:
   def __init__(self):

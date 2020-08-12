@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Software License Agreement (BSD License)
 #
 # Copyright (c) 2013, SRI International
@@ -43,6 +41,7 @@ import geometry_msgs.msg
 from math import pi
 from std_msgs.msg import String
 from moveit_commander.conversions import pose_to_list
+
 def all_close(goal, actual, tolerance):
   all_equal = True
   if type(goal) is list:
@@ -58,7 +57,7 @@ def all_close(goal, actual, tolerance):
 
   return True
 
-class Test():
+class Collision_Object_Adder():
   def __init__(self):
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('move_group_python_interface_tutorial',
@@ -71,15 +70,8 @@ class Test():
                                                    moveit_msgs.msg.DisplayTrajectory,
                                                    queue_size=20)
     planning_frame = group.get_planning_frame()
-    print "============ Reference frame: %s" % planning_frame
     eef_link = group.get_end_effector_link()
-    print "============ End effector: %s" % eef_link
     group_names = robot.get_group_names()
-    print "============ Robot Groups:", robot.get_group_names()
-    print "============ Printing robot state"
-    print robot.get_current_state()
-    print ""
-    self.plane_name = ''
     self.box_name = ''
     self.robot = robot
     self.scene = scene
@@ -88,75 +80,160 @@ class Test():
     self.planning_frame = planning_frame
     self.eef_link = eef_link
     self.group_names = group_names
-
-  def wait_for_state_update(self, box_is_known=False, box_is_attached=False, timeout=4):
+    
+  def wait_for_box_state_update(self, box_is_known=False, box_is_attached=False, timeout=4):
     box_name = self.box_name
     scene = self.scene
     start = rospy.get_time()
     seconds = rospy.get_time()
     while (seconds - start < timeout) and not rospy.is_shutdown():
-      # Test if the box is in attached objects
       attached_objects = scene.get_attached_objects([box_name])
       is_attached = len(attached_objects.keys()) > 0
-
-      # Test if the box is in the scene.
-      # Note that attaching the box will remove it from known_objects
       is_known = box_name in scene.get_known_object_names()
-
-      # Test if we are in the expected state
       if (box_is_attached == is_attached) and (box_is_known == is_known):
         return True
-
-      # Sleep so that we give other threads time on the processor
       rospy.sleep(0.1)
       seconds = rospy.get_time()
-
-    # If we exited the while loop without returning then we timed out
     return False
 
-  def add_box(self, timeout=4):
+  def add_plane(self, timeout=4):
     box_name = self.box_name
     scene = self.scene
-
     box_pose = geometry_msgs.msg.PoseStamped()
     box_pose.header.frame_id = "world"
     box_pose.pose.position.x = 0
     box_pose.pose.position.y = 0
-    box_pose.pose.position.z = -0.51
+    box_pose.pose.position.z = -0.06
     box_pose.pose.orientation.w = 1.0
-    box_name = 'ground'
-    scene.add_box(box_name, box_pose, size=(3, 3, 1))
-
+    box_name = 'plane'
+    scene.add_box(box_name, box_pose, size=(3, 3, 0.1))
     self.box_name=box_name
-    return self.wait_for_state_update(box_is_known=True, timeout=timeout)
+    return self.wait_for_box_state_update(box_is_known=True, timeout=timeout)
 
-  def attach_box(self, timeout=4):
-    box_name = self.box_name
-    robot = self.robot
-    scene = self.scene
-    eef_link = self.eef_link
-    group_names = self.group_names
-    grasping_group = 'hand'
-    touch_links = robot.get_link_names(group=grasping_group)
-    scene.attach_box(eef_link, box_name, touch_links=touch_links)
-    return self.wait_for_state_update(box_is_attached=True, box_is_known=False, timeout=timeout)
-
-  def remove_box(self, timeout=4):
+  def add_input_container_bottom(self, timeout=4):
     box_name = self.box_name
     scene = self.scene
-    scene.remove_world_object(box_name)
-    return self.wait_for_state_update(box_is_attached=False, box_is_known=False, timeout=timeout)
+    box_pose = geometry_msgs.msg.PoseStamped()
+    box_pose.header.frame_id = "world"
+    box_pose.pose.position.x = 0
+    box_pose.pose.position.y = 0.7 - 0.282575
+    box_pose.pose.position.z = 0.127/2
+    box_pose.pose.orientation.w = 1.0
+    box_name = 'input_container_bottom'
+    scene.add_box(box_name, box_pose, size=(0.3175, 0.01905, 0.127))
+    self.box_name=box_name
+    return self.wait_for_box_state_update(box_is_known=True, timeout=timeout)
 
+  def add_input_container_top(self, timeout=4):
+    box_name = self.box_name
+    scene = self.scene
+    box_pose = geometry_msgs.msg.PoseStamped()
+    box_pose.header.frame_id = "world"
+    box_pose.pose.position.x = 0
+    box_pose.pose.position.y = 0.7 + 0.282575
+    box_pose.pose.position.z = 0.127/2
+    box_pose.pose.orientation.w = 1.0
+    box_name = 'input_container_top'
+    scene.add_box(box_name, box_pose, size=(0.3175, 0.01905, 0.127))
+    self.box_name=box_name
+    return self.wait_for_box_state_update(box_is_known=True, timeout=timeout)
+
+  def add_input_container_left(self, timeout=4):
+    box_name = self.box_name
+    scene = self.scene
+    box_pose = geometry_msgs.msg.PoseStamped()
+    box_pose.header.frame_id = "world"
+    box_pose.pose.position.x = 0 + 0.3175/2
+    box_pose.pose.position.y = 0.7 
+    box_pose.pose.position.z = 0.127/2
+    box_pose.pose.orientation.w = 1.0
+    box_name = 'input_container_left'
+    scene.add_box(box_name, box_pose, size=(0.01905, 0.5842, 0.127))
+    self.box_name=box_name
+    return self.wait_for_box_state_update(box_is_known=True, timeout=timeout)
+
+  def add_input_container_right(self, timeout=4):
+    box_name = self.box_name
+    scene = self.scene
+    box_pose = geometry_msgs.msg.PoseStamped()
+    box_pose.header.frame_id = "world"
+    box_pose.pose.position.x = 0 - 0.3175/2
+    box_pose.pose.position.y = 0.7 
+    box_pose.pose.position.z = 0.127/2
+    box_pose.pose.orientation.w = 1.0
+    box_name = 'input_container_right'
+    scene.add_box(box_name, box_pose, size=(0.01905, 0.5842, 0.127))
+    self.box_name=box_name
+    return self.wait_for_box_state_update(box_is_known=True, timeout=timeout)
+
+  def add_output_container_bottom(self, timeout=4):
+    box_name = self.box_name
+    scene = self.scene
+    box_pose = geometry_msgs.msg.PoseStamped()
+    box_pose.header.frame_id = "world"
+    box_pose.pose.position.x = 0
+    box_pose.pose.position.y = -0.7 - 0.282575
+    box_pose.pose.position.z = 0.127/2
+    box_pose.pose.orientation.w = 1.0
+    box_name = 'output_container_bottom'
+    scene.add_box(box_name, box_pose, size=(0.3175, 0.01905, 0.127))
+    self.box_name=box_name
+    return self.wait_for_box_state_update(box_is_known=True, timeout=timeout)
+
+  def add_output_container_top(self, timeout=4):
+    box_name = self.box_name
+    scene = self.scene
+    box_pose = geometry_msgs.msg.PoseStamped()
+    box_pose.header.frame_id = "world"
+    box_pose.pose.position.x = 0
+    box_pose.pose.position.y = -0.7 + 0.282575
+    box_pose.pose.position.z = 0.127/2
+    box_pose.pose.orientation.w = 1.0
+    box_name = 'output_container_top'
+    scene.add_box(box_name, box_pose, size=(0.3175, 0.01905, 0.127))
+    self.box_name=box_name
+    return self.wait_for_box_state_update(box_is_known=True, timeout=timeout)
+
+  def add_output_container_left(self, timeout=4):
+    box_name = self.box_name
+    scene = self.scene
+    box_pose = geometry_msgs.msg.PoseStamped()
+    box_pose.header.frame_id = "world"
+    box_pose.pose.position.x = 0 + 0.3175/2
+    box_pose.pose.position.y = -0.7 
+    box_pose.pose.position.z = 0.127/2
+    box_pose.pose.orientation.w = 1.0
+    box_name = 'output_container_left'
+    scene.add_box(box_name, box_pose, size=(0.01905, 0.5842, 0.127))
+    self.box_name=box_name
+    return self.wait_for_box_state_update(box_is_known=True, timeout=timeout)
+
+  def add_output_container_right(self, timeout=4):
+    box_name = self.box_name
+    scene = self.scene
+    box_pose = geometry_msgs.msg.PoseStamped()
+    box_pose.header.frame_id = "world"
+    box_pose.pose.position.x = 0 - 0.3175/2
+    box_pose.pose.position.y = -0.7 
+    box_pose.pose.position.z = 0.127/2
+    box_pose.pose.orientation.w = 1.0
+    box_name = 'output_container_right'
+    scene.add_box(box_name, box_pose, size=(0.01905, 0.5842, 0.127))
+    self.box_name=box_name
+    return self.wait_for_box_state_update(box_is_known=True, timeout=timeout)
 
 def main():
   try:
-    print "============ Press `Enter` to begin the tutorial by setting up the moveit_commander (press ctrl-d to exit) ..."
-    raw_input()
-    test = Test()
-
-    print "============ Press `Enter` to add a ground plane collision item to the planning scene ..."
-    raw_input()
-    test.add_box()
+    collision = Collision_Object_Adder()
+    collision.add_input_container_left()
+    collision.add_input_container_right()
+    collision.add_input_container_bottom()
+    collision.add_input_container_top()
+    collision.add_output_container_left()
+    collision.add_output_container_right()
+    collision.add_output_container_bottom()
+    collision.add_output_container_top()
+    collision.add_plane()
 
   except rospy.ROSInterruptException:
     return

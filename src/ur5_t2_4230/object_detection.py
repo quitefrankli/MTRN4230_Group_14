@@ -15,9 +15,7 @@ def find_objects(original_image):
   #
   
   # first crop the image
-  left_offset = 135
-  top_offset = 130
-  image = original_image[top_offset:355, left_offset:505]
+  image = original_image[140:340, 150:490]
   # we may possibly want to subsample the image to increase performance
 
   # filter out anything that isn't of interest
@@ -76,11 +74,12 @@ def find_objects(original_image):
     # we know the container is approx 0.5m long on the longer side
     container_length = 0.5
 
-    scale = len(image[0])/container_length
+    scale = (len(image[0])-40)/container_length # -40 to get rid of border part
+    
     container_center = np.array([len(image[0]), len(image)])/2 # local x, y
 
     offset = (center - container_center)/scale
-    global_center = np.array([offset[1], offset[0]]) \
+    global_center = np.array([-offset[1], offset[0]]) \
       + container_global_center # global x, y
     
     print(color, name, 'at', global_center)

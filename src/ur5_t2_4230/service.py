@@ -17,10 +17,9 @@ def find_objects(original_image):
   # Preprocessing
   #
   global_center_list = np.array([[0,0]])
+  
   # first crop the image
-  left_offset = 135
-  top_offset = 130
-  image = original_image[top_offset:355, left_offset:505]
+  image = original_image[140:340, 150:490]
   # we may possibly want to subsample the image to increase performance
 
   # filter out anything that isn't of interest
@@ -84,7 +83,7 @@ def find_objects(original_image):
 
     offset = (center - container_center)/scale
     print(offset)
-    global_center = np.array([[offset[0,1], offset[0,0]]]) \
+    global_center = np.array([[-offset[0,1], offset[0,0]]]) \
       + container_global_center # global x, y
     
     print(color, name, 'at', global_center)

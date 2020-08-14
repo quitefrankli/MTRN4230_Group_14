@@ -26,3 +26,9 @@
 
 ### For object detection
 * `python src/ur5_t2_4230/object_detection.py`
+
+### To run services and clients
+1) * roslaunch ur5_t2_4230 ur5_world.launch
+2) * rosrun ur5_t2_4230 service.py (It included object_detection.py so no need to run that file)
+3) * rosrun ur5_t2_4230 controller.py
+4) * rosrun ur5_t2_4230 kinematics_client.py

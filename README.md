@@ -6,12 +6,19 @@
 
 ## Current Status
 * Preliminary basic environment 1 input container, 1 output container and 10 objects
+
+
 ![](environment.png)
 
+
 * Object localisation and classification from robot camera
+
+
 ![](object_localisation_and_classification.png)
 
+
 * Basic kinematics
+
 
 ## Installation and Running
 1. `git clone https://github.com/quitefrankli/MTRN4230_Group_14`

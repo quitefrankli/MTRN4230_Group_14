@@ -7,9 +7,15 @@ import numpy as np
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
+from spawn_objects import URDF_Object, get_random_string, spawn_products
+from geometry_msgs.msg import Point
+import time
+from matplotlib import pyplot as plt
 
 
 def find_objects(original_image):
+  spawned_objects = []
+
   #
   # Preprocessing
   #
@@ -46,7 +52,7 @@ def find_objects(original_image):
 
     # discern shape of contour
     if len(approximation) == 4: # cube
-      name = 'cube'
+      name = 'box'
     else: # cylinder
       name = 'cylinder'
 
@@ -72,20 +78,28 @@ def find_objects(original_image):
     # we know the center of the input container is at x=0,y=0.7
     container_global_center = np.array([0, 0.7]) # global x, y
     # we know the container is approx 0.5m long on the longer side
-    container_length = 0.5
+    container_length = 0.51
 
     scale = (len(image[0])-40)/container_length # -40 to get rid of border part
     
     container_center = np.array([len(image[0]), len(image)])/2 # local x, y
 
     offset = (center - container_center)/scale
-    global_center = np.array([-offset[1], offset[0]]) \
+    global_center = np.array([-offset[1], -offset[0]]) \
       + container_global_center # global x, y
     
     print(color, name, 'at', global_center)
 
-  cv2.imshow('image', image)
-  cv2.waitKey(0)
+    spawned_objects.append(URDF_Object(
+      get_random_string(), 
+      color+'_'+name,
+      Point(global_center[0], global_center[1], 0.2)
+    ))
+
+  plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+  plt.pause(0.01)
+
+  return spawned_objects
 
 class colour_image_converter:
   def __init__(self):
@@ -94,6 +108,8 @@ class colour_image_converter:
     self.bridge = CvBridge()
     self.image_sub = rospy.Subscriber("/camera/color/image_raw",Image,self.callback)
 
+    self.image_exists = False
+
   def callback(self,data):
     try:
       self.original_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
@@ -101,7 +117,7 @@ class colour_image_converter:
       print(e)
 
     # note that this is an expensive function, only run when another ros node requests it
-    find_objects(self.original_image)
+    self.image_exists = True
 
     try:
       self.image_pub.publish(self.bridge.cv2_to_imgmsg(self.original_image, "bgr8"))
@@ -111,14 +127,26 @@ class colour_image_converter:
 def main(args):
   rospy.init_node('image_converter_rgb', anonymous=True)
   
-  colour_image_converter()
+  cic = colour_image_converter()
 
-  try:
-    rospy.spin()
-  except KeyboardInterrupt:
-    print("Shutting down")
+  original_spawned_products = spawn_products(10)
+  time.sleep(2)
 
-  cv2.destroyAllWindows()
+  abort = False
+  while abort is False:
+    if cic.image_exists == False:
+      time.sleep(0.1)
+      continue
+    spawned_objects = find_objects(cic.original_image)
+    raw_input('press enter to continue...')
+    print('deleting objects')
+    for spawned_object in spawned_objects:
+      spawned_object.delete()
+    ui = raw_input('enter q to quit ')
+    abort = (ui == 'q')
+
+  for product in original_spawned_products:
+    product.delete()
 
 if __name__ == '__main__':
     main(sys.argv)

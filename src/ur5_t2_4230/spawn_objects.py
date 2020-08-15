@@ -11,11 +11,27 @@ from std_msgs.msg import String
 from gazebo_msgs.srv import SpawnModel, DeleteModel
 from geometry_msgs.msg import Pose, Point, Quaternion
 import numpy
+import string
+import os
 
+
+# useful for debugging
+def get_random_string(length=15):
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for _ in range(length))
+
+def np_to_point(np_array):
+    return Point(np_array[0], np_array[1], np_array[2])
 
 class Static_Object(object):
+    rospy.wait_for_service("gazebo/spawn_urdf_model")
+    rospy.wait_for_service("gazebo/spawn_sdf_model")
+    rospy.wait_for_service("gazebo/delete_model")
+
     MODEL_PATH = rospy.get_param('MODEL_PATH')
     delete_model = rospy.ServiceProxy("gazebo/delete_model", DeleteModel)
+
+    all_current_models = []
 
     def __init__(self, node_name, object_name, point, orient=Quaternion()):
         '''Args: str, str, Point, Point, Quaternion'''
@@ -23,9 +39,24 @@ class Static_Object(object):
             xml = file.read()
             self.spawn_model(node_name, xml, '', Pose(point, orient), 'world')
         self.node_name = node_name
+        self.all_current_models.append(node_name)
 
     # def __del__(self):
-    #     self.delete_model(self.node_name)
+    #     self.delete()
+
+    def delete(self):
+        os.system('rosservice call /gazebo/delete_model ' + self.node_name)
+        return
+
+        rospy.wait_for_service("gazebo/delete_model")
+        delete_model = rospy.ServiceProxy("gazebo/delete_model", DeleteModel)
+        delete_model(str(self.node_name))
+
+    @classmethod
+    def delete_all(cls):
+        for model in cls.all_current_models:
+            os.system('rosservice call /gazebo/delete_model ' + model)
+        cls.all_current_models = []
 
 class URDF_Object(Static_Object):
     spawn_model = rospy.ServiceProxy("gazebo/spawn_urdf_model", SpawnModel)
@@ -56,8 +87,26 @@ class Random_Grid(object):
             raise Exception("TOO MANY OBJECTS")
         return self.unused_coordinates.pop()
 
-def np_to_point(np_array):
-    return Point(np_array[0], np_array[1], np_array[2])
+def spawn_products(num_products):
+    object_list = ['red_box', 'green_box', 'blue_box',
+                   'red_cylinder', 'green_cylinder', 'blue_cylinder']
+
+    products = []
+
+    origin = numpy.array([0, 0.7, 0.1]) # 0.7 is input container y offset
+    offset = numpy.array([0.13, 0.25, 0]) # offset in terms of container internal walls
+
+    # actually the other way around swap row
+    rand_grid = Random_Grid(5, 7, origin, offset)
+
+    for _ in range(num_products):
+        products.append(URDF_Object(
+            get_random_string(),
+            random.choice(object_list), 
+            rand_grid()
+        ))
+
+    return products
 
 def main():
     print("Waiting for gazebo services...")
@@ -76,24 +125,7 @@ def main():
     output_container = SDF_Object('output_container', 'output_container', 
         output_container_point, container_orientation)
 
-    object_list = ['red_box', 'green_box', 'blue_box',
-                   'red_cylinder', 'green_cylinder', 'blue_cylinder']
-
-    products = []
-
-    origin = numpy.array([0, input_container_y, 0.1])
-    offset = numpy.array([0.13, 0.25, 0]) # offset in terms of container internal walls
-
-    # actually the other way around swap row
-    rand_grid = Random_Grid(5, 7, origin, offset)
-
-    num_products = 5
-    for i in range(num_products):
-        products.append(URDF_Object(
-            '_ProductNum ' + str(i),
-            random.choice(object_list), 
-            rand_grid()
-        ))
+    # spawn_products()
 
 if __name__ == '__main__':
     try:

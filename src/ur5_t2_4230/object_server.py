@@ -1,8 +1,4 @@
 #!/usr/bin/env python
-
-from __future__ import print_function
-
-from ur5_t2_4230.srv import object_detection,object_detectionResponse
 import roslib
 import sys
 import rospy
@@ -11,16 +7,20 @@ import numpy as np
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
+#from spawn_objects import URDF_Object, get_random_string, spawn_products
+from geometry_msgs.msg import Point
+import time
+from matplotlib import pyplot as plt
+from ur5_t2_4230.srv import object_detection,object_detectionResponse
 
 def find_objects(original_image):
+  spawned_objects = []
+
   #
   # Preprocessing
   #
-  global_center_list = np.array([[0,0]])
+  
   # first crop the image
-  # left_offset = 135
-  # top_offset = 130
-  # image = original_image[top_offset:355, left_offset:505]
   image = original_image[140:340, 150:490]
   # we may possibly want to subsample the image to increase performance
 
@@ -52,7 +52,7 @@ def find_objects(original_image):
 
     # discern shape of contour
     if len(approximation) == 4: # cube
-      name = 'cube'
+      name = 'box'
     else: # cylinder
       name = 'cylinder'
 
@@ -76,34 +76,36 @@ def find_objects(original_image):
     #
 
     # we know the center of the input container is at x=0,y=0.7
-    container_global_center = np.array([[0, 0.7]]) # global x, y
+    container_global_center = np.array([0, 0.7]) # global x, y
     # we know the container is approx 0.5m long on the longer side
-    container_length = 0.5
+    container_length = 0.51
 
-    scale = len(image[0])/container_length
-    container_center = np.array([[len(image[0]), len(image)]])/2 # local x, y
+    scale = (len(image[0])-40)/container_length # -40 to get rid of border part
+    
+    container_center = np.array([len(image[0]), len(image)])/2 # local x, y
 
     offset = (center - container_center)/scale
-    print(offset)
-    #global_center = np.array([[offset[0,1], offset[0,0]]]) \
-    global_center = np.array([[-offset[0,1], offset[0,0]]]) \
+    global_center = np.array([-offset[1], -offset[0]]) \
       + container_global_center # global x, y
     
     print(color, name, 'at', global_center)
-    # append global centers (x,y) onto a list
-    global_center_list = np.append(global_center_list, global_center, axis = 0)
 
-  cv2.imshow('image', image)
-  cv2.waitKey(1)
-  print(global_center_list)
-  return global_center_list
+    spawned_objects.append((color+' '+name, global_center[0], global_center[1]))
+
+  plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+  plt.pause(0.01)
+
+  return spawned_objects
 
 class colour_image_converter:
   def __init__(self):
-    #self.image_pub = rospy.Publisher("cv_rgb_image",Image,queue_size=10)
+    self.image_pub = rospy.Publisher("cv_rgb_image",Image,queue_size=10)
+
     self.bridge = CvBridge()
     self.image_sub = rospy.Subscriber("/camera/color/image_raw",Image,self.callback)
-    
+
+    self.image_exists = False
+
   def callback(self,data):
     try:
       self.original_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
@@ -111,49 +113,43 @@ class colour_image_converter:
       print(e)
 
     # note that this is an expensive function, only run when another ros node requests it
-    self.global_center_list = find_objects(self.original_image)
+    self.image_exists = True
 
     try:
       self.image_pub.publish(self.bridge.cv2_to_imgmsg(self.original_image, "bgr8"))
     except CvBridgeError as e:
       print(e)
 
-x = np.array([0])
-y = np.array([0])
 
 def service_callback(req):
+  
+    cic = colour_image_converter()
+  
+    while cic.image_exists == False:
+        continue
+    
+    objs = find_objects(cic.original_image)
 
-    def callback(data):
-        try:
-            print('enter try')
-            global x 
-            global y 
-            original_image = bridge.imgmsg_to_cv2(data, "bgr8")
-            coor = find_objects(original_image)
-            #print(original)
-            print('coor')
-            print(coor)
-            x = coor[:,0]
-            y = coor[:,1]
-            #print(original_image.shape)
-        except CvBridgeError as e:
-            print(e)
+    X = []
+    Y = []
+    st = []
+    for i in range(len(objs)):
+        # string
+        st.append(objs[i][0])
+        # X coor
+        X.append(objs[i][1])
+        # Y coor
+        Y.append(objs[i][2])
 
-    bridge = CvBridge()
-    image_sub = rospy.Subscriber("/camera/color/image_raw",Image,callback)
-    rospy.wait_for_message("/camera/color/image_raw", Image)
-    print('in service callback')
-    return object_detectionResponse(x,y)
+    return object_detectionResponse(X,Y,st)
+    
 
-
-
-def test_server():
+def main(args):
     rospy.init_node('object_detection_server')
     s = rospy.Service('object_detection', object_detection, service_callback)
-    print("In service")
+    print("In object_detection_server")
     rospy.spin()
 
 
-
-if __name__ == "__main__":
-    test_server()
+if __name__ == '__main__':
+    main(sys.argv)

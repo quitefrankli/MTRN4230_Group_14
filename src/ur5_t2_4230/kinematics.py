@@ -115,51 +115,56 @@ def main():
 
     kinematics = Kinematics()
     kinematics.reset_pose()
-
+    
     angle_up = np.array([0, -pi/3, 0, 0, 0, 0])
     bend_down = np.array([0, 0, pi/2, 0, 0, 0])
     swing_right = np.array([pi/2, 0, 0, 0, 0, 0])
 
-    print('demonstrating forward kinematics...')
-    rospy.sleep(3)
-
-    kinematics.fkr(angle_up)
-    kinematics.fkr(swing_right)
-    kinematics.fkr(bend_down)
-
-    kinematics.fkr(bend_down*-1)
-    kinematics.fkr(swing_right*-2)
-    kinematics.fkr(bend_down)
-
-    kinematics.fkr(bend_down*-1)
-    kinematics.fkr(swing_right)
-    kinematics.reset_pose()
-
-    print('demonstrating inverse kinematics...')
-    rospy.sleep(3)
-
     kinematics.fk(angle_up*2)
-    pos1 = Pose(Point(0.5, 0.5, 0.5), Quaternion())
-    print(pos1)
-    kinematics.ik(pos1)
+    rospy.sleep(3)
+    pos = Pose(Point(-0.064999, 0.700001, 0.1), Quaternion())
+    kinematics.ik(pos)
+    rospy.sleep(3)
+    # print('demonstrating forward kinematics...')
+    # rospy.sleep(3)
+
+    # kinematics.fkr(angle_up)
+    # kinematics.fkr(swing_right)
+    # kinematics.fkr(bend_down)
+
+    # kinematics.fkr(bend_down*-1)
+    # kinematics.fkr(swing_right*-2)
+    # kinematics.fkr(bend_down)
+
+    # kinematics.fkr(bend_down*-1)
+    # kinematics.fkr(swing_right)
+    # kinematics.reset_pose()
+
+    # print('demonstrating inverse kinematics...')
+    # rospy.sleep(3)
+
+    # kinematics.fk(angle_up*2)
+    # pos1 = Pose(Point(0.5, 0.5, 0.5), Quaternion())
+    # print(pos1)
+    # kinematics.ik(pos1)
     
-    rospy.sleep(1)
-    kinematics.fk(angle_up*2)
-    pos2 = Pose(Point(0.2, -0.6, 0.3), Quaternion())
-    print(pos2)
-    kinematics.ik(pos2)
+    # rospy.sleep(1)
+    # kinematics.fk(angle_up*2)
+    # pos2 = Pose(Point(0.2, -0.6, 0.3), Quaternion())
+    # print(pos2)
+    # kinematics.ik(pos2)
 
-    rospy.sleep(1)
-    kinematics.fk(angle_up*2)
-    pos3 = Pose(Point(-0.3, 0.2, 0.4), Quaternion())
-    print(pos3)
-    kinematics.ik(pos3)
+    # rospy.sleep(1)
+    # kinematics.fk(angle_up*2)
+    # pos3 = Pose(Point(-0.3, 0.2, 0.4), Quaternion())
+    # print(pos3)
+    # kinematics.ik(pos3)
 
-    rospy.sleep(1)
-    kinematics.fk(angle_up*2)
-    pos4 = Pose(Point(0, 0.4, 0.6), Quaternion())
-    print(pos4)
-    kinematics.ik(pos4)
+    # rospy.sleep(1)
+    # kinematics.fk(angle_up*2)
+    # pos4 = Pose(Point(0, 0.4, 0.6), Quaternion())
+    # print(pos4)
+    # kinematics.ik(pos4)
 
 if __name__ == '__main__':
   try:

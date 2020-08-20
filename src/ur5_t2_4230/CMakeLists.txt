@@ -206,6 +206,6 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-catkin_install_python(PROGRAMS service.py controller.py kinematics_client.py
+catkin_install_python(PROGRAMS service.py object_server.py controller.py kinematics_client.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

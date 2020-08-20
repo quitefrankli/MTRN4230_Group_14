@@ -153,17 +153,18 @@ def main():
     # kinematics.fkr(swing_right)
     # kinematics.reset_pose()
 
-    for i in range(len(x)):
-        X = x[i]
-        Y = y[i]
-        Z = 0.25
-        kinematics.fk(angle_up*2)
-        pos = Pose(Point(X, Y, Z), Quaternion())
-        print(pos)
-        #print("%s/%s" %i %len(x))
-        print(i)
-        kinematics.ik(pos)
-        rospy.sleep(1)
+    # for i in range(1,len(x)):
+    #     X = x[i]
+    #     Y = y[i]
+    #     Z = 0.2
+    #     kinematics.fk(angle_up*2)
+    #     rospy.sleep(2)
+    #     pos = Pose(Point(X, Y, Z), Quaternion())
+    #     print(pos)
+    #     #print("%s/%s" %i %len(x))
+    #     print(i)
+    #     kinematics.ik(pos)
+    #     rospy.sleep(3)
 
 
     print('Done!')

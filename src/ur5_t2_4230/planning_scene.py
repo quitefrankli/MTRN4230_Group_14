@@ -59,10 +59,12 @@ def all_close(goal, actual, tolerance):
 
 class Collision_Object_Adder():
   def __init__(self):
+    print('in init')
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('move_group_python_interface_tutorial',
                     anonymous=True)
     robot = moveit_commander.RobotCommander()
+    print('after robot')
     scene = moveit_commander.PlanningSceneInterface()
     group_name = "manipulator"
     group = moveit_commander.MoveGroupCommander(group_name)
@@ -80,6 +82,8 @@ class Collision_Object_Adder():
     self.planning_frame = planning_frame
     self.eef_link = eef_link
     self.group_names = group_names
+    print('done init')
+    
     
   def wait_for_box_state_update(self, box_is_known=False, box_is_attached=False, timeout=4):
     box_name = self.box_name

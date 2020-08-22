@@ -10,7 +10,7 @@ import moveit_msgs.msg
 import geometry_msgs.msg
 from geometry_msgs.msg import Pose, Quaternion, Point
 from math import pi
-from std_msgs.msg import String
+from std_msgs.msg import String, Bool
 from moveit_commander.conversions import pose_to_list
 from copy import deepcopy
 import numpy as np
@@ -23,12 +23,14 @@ import moveit_commander
 import moveit_msgs.msg
 import geometry_msgs.msg
 from ur5_t2_4230.srv import *
+from ur5_gripper import trigger
 # from moveit_commander import plan
 
 class Kinematics(object):
     """MoveGroupPythonIntefaceTutorial"""
 
     def __init__(self):
+        self.gripper_pub = rospy.Publisher('Gripper', Bool, queue_size=1)
         # First initialize `moveit_commander`_ and a `rospy`_ node:
         moveit_commander.roscpp_initialize(sys.argv)
         self.robot = moveit_commander.RobotCommander()
@@ -169,9 +171,10 @@ def controller_client():
     return resp.Xo, resp.Yo, resp.Zo
   except rospy.ServiceException as e:
     print("Service call failed: %s"%e)
+  
 
 def main():
-    rospy.init_node('MTRN4230Group14Kinematics', anonymous=True)
+    rospy.init_node('Kinematics_client', anonymous=True)
 
     x,y,z = controller_client()
     print(x)
@@ -181,6 +184,7 @@ def main():
     # create class obj
     kinematics = Kinematics()
 
+    #gripper_pub = rospy.Publisher('Gripper', Bool, queue_size=1)
 
 
     print('demonstrating kinematics...')
@@ -201,25 +205,32 @@ def main():
 
         wpose.position.x = X
         wpose.position.y = Y
-        wpose.position.z = 0.065 # height of box relative to world 
+        wpose.position.z = 0.07 # height of box relative to world 
 
         waypoints.append(deepcopy(wpose))
 
         plan, fraction = kinematics.plan_cartesian_path(waypoints)
 
         kinematics.execute_plan(plan)
-        # pick up: gripper on
-        rospy.sleep(3)
+        print("Planning")
+        # move to pick up:
+        #rospy.sleep(1)
+        # gripper on
+        kinematics.gripper_pub.publish(True)
         #go to place : 
         kinematics.go_to_place()
-        rospy.sleep(3)
+        #rospy.sleep(2)
 
+        kinematics.gripper_pub.publish(False)
+        #rospy.sleep(1)
 
     print('Done!')
+    
 
 if __name__ == '__main__':
   try:
     main()
+    rospy.spin()
   except rospy.ROSInterruptException:
     pass
   except KeyboardInterrupt:

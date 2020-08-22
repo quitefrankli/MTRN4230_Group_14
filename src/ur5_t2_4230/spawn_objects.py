@@ -76,8 +76,8 @@ def main():
     output_container = SDF_Object('output_container', 'output_container', 
         output_container_point, container_orientation)
 
-    object_list = ['red_box', 'green_box', 'blue_box',
-                   'red_cylinder', 'green_cylinder', 'blue_cylinder']
+    object_list = ['red_box']#, 'green_box', 'blue_box',
+                   #'red_cylinder', 'green_cylinder', 'blue_cylinder']
 
     products = []
 

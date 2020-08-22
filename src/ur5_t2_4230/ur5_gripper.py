@@ -208,6 +208,7 @@ def gripper8_off():
 def trigger(data):
     flag = data.data
     if flag:
+        print('ON')
         gripper_on()
         gripper1_on()
         gripper2_on()
@@ -219,6 +220,7 @@ def trigger(data):
         gripper8_on()
 
     else:
+        print('OFF')
         gripper_off()
         gripper1_off()
         gripper2_off()

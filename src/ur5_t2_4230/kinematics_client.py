@@ -85,7 +85,7 @@ class Kinematics(object):
         self.group.set_joint_value_target(self.end_joint_states)
 
         # Set the internal state to the current state
-        self.group.set_start_state_to_current_state()
+        #self.group.set_start_state_to_current_state()
         plan = self.group.plan()
 
         self.group.execute(plan, wait=True)
@@ -196,7 +196,7 @@ def main():
         Z = z
 
         kinematics.go_to_idle()
-        rospy.sleep(3)
+        rospy.sleep(1)
 
         start_pose = kinematics.group.get_current_pose().pose
         # Append the pose to the waypoints list
@@ -218,11 +218,11 @@ def main():
         # gripper on
         kinematics.gripper_pub.publish(True)
         #go to place : 
+        #rospy.sleep(6)
         kinematics.go_to_place()
-        #rospy.sleep(2)
-
-        kinematics.gripper_pub.publish(False)
-        #rospy.sleep(1)
+        #rospy.sleep(6)
+        kinematics.gripper_pub.publish(True)
+        rospy.sleep(1)
 
     print('Done!')
     

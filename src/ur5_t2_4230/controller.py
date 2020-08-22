@@ -19,7 +19,7 @@ def UI():
     object_dict = objectCoor()
     while not end:
         try:
-            obj = input("Object: ")
+            obj = raw_input("Object: ")
             if obj.lower() not in object_dict.keys():
                 print("Invalid object")
                 continue

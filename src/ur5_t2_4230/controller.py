@@ -10,73 +10,68 @@ from std_msgs.msg import String
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 from ur5_t2_4230.srv import *
+from exceptions import *
+
 
 def UI():
-  end = 0
-  queue = []
-  while not end:
-    obj = input("Object: ")
-    num = input("Amount: ")
-    end = input("Done? Yes or No (1/0): ")
-    print(str(num) + ' ' + obj)
-    for i in range(num):
-        queue.append(obj.lower())
+    end = 0
+    queue = []
+    object_dict = objectCoor()
+    while not end:
+        try:
+            obj = input("Object: ")
+            if obj.lower() not in object_dict.keys():
+                print("Invalid object")
+                continue
+            num = input("Amount: ")
+            if len(object_dict[obj]) < int(num):
+                print("Invalid number")
+                continue
+            end = input("? Yes or No (1/0): ")
+            print(str(num) + ' ' + obj)
+            for i in range(num):
+                queue.append(obj.lower())
+        except Exception:
+            continue
 
-  x,y,st = objectCoor()
-  x = list(x)
-  y = list(y)
-  Xo = []
-  Yo = []
-  offset = 0.35
 
-  prev = ""
-  item_count = 1
-  exist = True
-  # loop through a list of shapes
-  while len(queue) is not 0:
-    top = queue.pop(0)
-    if prev == top:
-      item_count+=1
-    # try to match input shapes to detected shapes
-    for i in range(len(st)):
-      if top == st[i]:
-        Xo.append(x.pop(i))
-        Yo.append(y.pop(i))
-        st.pop(i)
-        exist = True
-        break
-      exist = False
-    prev = top
+    Xo = []
+    Yo = []
+    offset = 0.35
+    while len(queue) > 0:
+        item = queue.pop()
+        (_x, _y) = object_dict[item].pop()
+        Xo.append(_x)
+        Yo.append(_y)
+    return Xo, Yo, offset
 
-    if exist is False:
-      item_count-=1
-      print("{} ".format(item_count) + top + " found")
-      pass
-  
-  print('Xo')
-  print(Xo)
-  print('Yo')
-  print(Yo)
-
-  return Xo, Yo, offset
 
 def objectCoor():
-  rospy.wait_for_service('object_detection')
-  try:
-    detect = rospy.ServiceProxy('object_detection', object_detection)
-    resp = detect()
-    print('in detect proxy')
-    return resp.X, resp.Y, resp.st
-  except rospy.ServiceException as e:
-    print("Service call failed: %s"%e)
+    # dict { 'object names' : list(tuple(x,y)) }
+    rospy.wait_for_service('object_detection')
+    try:
+        detect = rospy.ServiceProxy('object_detection', object_detection)
+        resp = detect()
+        print('in detect proxy')
+        result_dict = {}
+        for i, obj_name in enumerate(resp.st):
+            if obj_name not in result_dict.keys():
+                result_dict[obj_name] = [(resp.X[i], resp.Y[i])]
+            else:
+                result_dict[obj_name].append((resp.X[i], resp.Y[i]))
+        return result_dict
+    except rospy.ServiceException as e:
+        print("Service call failed: %s" % e)
+
 
 def controller_service_callback(req):
-  x, y, z = UI()
-  print('x')
-  print(x)
-  print('y')
-  print(y)
-  return controllerResponse(x,y,z)
+    x, y, z = UI()
+    print('x')
+    print(x)
+    print('y')
+    print(y)
+    return controllerResponse(x, y, z)
+
 
 def controller_server():
     rospy.init_node('controller_server')
@@ -86,5 +81,4 @@ def controller_server():
 
 
 if __name__ == '__main__':
-  controller_server()
-
+    controller_server()

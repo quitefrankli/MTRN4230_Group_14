@@ -124,6 +124,9 @@ class Kinematics(object):
         # for the end-effector to go through:
         ##
 
+        # Plans path to avoid collision objects in Planning Scene:
+        self.group.set_planner_id("RRTConnectkConfigDefault")
+
         # print(self.group.get_current_pose().pose)
 
         # We want the Cartesian path to be interpolated at a resolution of 1 cm
@@ -185,13 +188,9 @@ def main():
     #go to place : 
     kinematics.go_to_place()
 
-
-
-
     pick_pose = kinematics.group.get_current_pose().pose
     print(pick_pose)
     print(kinematics.group.get_current_pose(kinematics.end_effector_link).pose)
-    
 
     # print('demonstrating forward kinematics...')
     # rospy.sleep(3)

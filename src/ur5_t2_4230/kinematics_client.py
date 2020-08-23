@@ -205,7 +205,7 @@ def main():
 
         wpose.position.x = X
         wpose.position.y = Y
-        wpose.position.z = 0.07 # height of box relative to world 
+        wpose.position.z = 0.04 # height of box relative to world 
 
         waypoints.append(deepcopy(wpose))
 
@@ -216,12 +216,18 @@ def main():
         # move to pick up:
         #rospy.sleep(1)
         # gripper on
+        kinematics.gripper_pub.publish(False)
         kinematics.gripper_pub.publish(True)
+        wpose.position.z += 0.068
+        waypoints.append(deepcopy(wpose))
+        plan, fraction = kinematics.plan_cartesian_path(waypoints)
+        kinematics.execute_plan(plan)
+        print('planning 2')
         #go to place : 
-        #rospy.sleep(6)
+        rospy.sleep(3)
         kinematics.go_to_place()
-        #rospy.sleep(6)
-        kinematics.gripper_pub.publish(True)
+        # rospy.sleep(6)
+        # kinematics.gripper_pub.publish(False)
         rospy.sleep(1)
 
     print('Done!')

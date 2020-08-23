@@ -19,10 +19,10 @@
 	<!-- include gazebo_ros launcher -->
 	<include file="$(find gazebo_ros)/launch/empty_world.launch">
 		<arg name="world_name" value="$(arg world)" />
-		<arg name="debug" value="$(arg debug)" />
+		<!-- <arg name="debug" value="$(arg debug)" /> -->
 		<arg name="gui" value="$(arg gui)" />
 		<arg name="paused" value="$(arg pause)" />
-		<arg name="use_sim_time" value="true" />
+		<!-- <arg name="use_sim_time" value="true" /> -->
 	</include>
 	<!-- spawn ur5 -->
 	<!-- send robot urdf to param server -->
@@ -31,7 +31,7 @@
 	</include>
 
 	<!-- push robot_description to factory and spawn robot in gazebo -->
-	<node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model robot -z 0.0 -x 0.0 -y 0.0" respawn="false" output="screen" />
+	<node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model robot -z 0.02 -x 0.0 -y 0.0" respawn="false" output="screen" />
 
 	<include file="$(find ur_gazebo)/launch/controller_utils.launch"/>
 

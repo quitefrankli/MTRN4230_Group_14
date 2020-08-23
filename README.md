@@ -21,6 +21,7 @@
 5. `roslaunch ur5_t2_4230 ur5_world.launch`
 
 ### For basic motion
+* `python src/ur5_t2_4230/planning_scene.py`
 * `python src/ur5_t2_4230/kinematics.py`
 * if robot collides with something and gets stuck ---> `python src/ur5_t2_4230/planning_scene.py` `python src/ur5_t2_4230/testmotion.py`
 

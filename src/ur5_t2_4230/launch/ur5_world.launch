@@ -41,7 +41,7 @@
 	<!-- show robot in rviz 
 	<node name="rviz" pkg="rviz" type="rviz"/>
 	-->
-	
+
 	<!-- Remap follow_joint_trajectory -->
 	<remap if="$(arg sim)" from="/follow_joint_trajectory" to="/arm_controller/follow_joint_trajectory"/>
 
@@ -51,5 +51,6 @@
 		<arg name="debug" default="$(arg debug)" />
 	</include>
 
+	<node name="run_once" pkg="ur5_t2_4230" type="run_once.py" output="screen"/>
 
 </launch>

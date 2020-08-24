@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-#!/usr/bin/env python
-
 import sys
 import copy
 import rospy
@@ -89,7 +87,7 @@ class Kinematics(object):
         self.group.set_max_acceleration_scaling_factor(.15)
         self.group.set_max_velocity_scaling_factor(.25)
         self.end_joint_states = self.group.get_current_joint_values()
-        self.end_joint_states[0] = 1.57691*3
+        self.end_joint_states[0] = 1.57691*2
         self.end_joint_states[1] = -1.71667
         self.end_joint_states[2] = 1.79266
         self.end_joint_states[3] = -1.67721

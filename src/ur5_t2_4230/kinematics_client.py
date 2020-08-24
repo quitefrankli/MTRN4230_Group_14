@@ -26,6 +26,7 @@ from ur5_t2_4230.srv import *
 from ur5_gripper import trigger
 # from moveit_commander import plan
 
+
 class Kinematics(object):
     """MoveGroupPythonIntefaceTutorial"""
 
@@ -50,13 +51,6 @@ class Kinematics(object):
         # We can get the name of the reference frame for this robot:
         self.planning_frame = self.group.get_planning_frame()
 
-        # Allow some leeway in position (meters) and orientation (radians)
-        self.group.set_goal_position_tolerance(0.01)
-        self.group.set_goal_orientation_tolerance(0.1)
-
-        self.go_to_idle()
-    
-    def go_to_idle(self):
         self.default_joint_states = self.group.get_current_joint_values()
         self.default_joint_states[0] = 1.57691
         self.default_joint_states[1] = -1.71667
@@ -64,6 +58,24 @@ class Kinematics(object):
         self.default_joint_states[3] = -1.67721
         self.default_joint_states[4] = -1.5705
         self.default_joint_states[5] = 0.0
+
+        # Allow some leeway in position (meters) and orientation (radians)
+        self.group.set_goal_position_tolerance(0.01)
+        self.group.set_goal_orientation_tolerance(0.1)
+        self.transition_pose = deepcopy(self.default_joint_states)
+
+        self.transition_pose[4] = -1.95
+
+        self.go_to_idle()
+
+    def go_to_idle(self):
+        # self.default_joint_states = self.group.get_current_joint_values()
+        # self.default_joint_states[0] = 1.57691
+        # self.default_joint_states[1] = -1.71667
+        # self.default_joint_states[2] = 1.79266
+        # self.default_joint_states[3] = -1.67721
+        # self.default_joint_states[4] = -1.5705
+        # self.default_joint_states[5] = 0.0
 
         self.group.set_joint_value_target(self.default_joint_states)
 
@@ -74,21 +86,23 @@ class Kinematics(object):
         self.group.execute(plan, wait=True)
 
     def go_to_place(self):
+        self.group.set_max_acceleration_scaling_factor(.15)
+        self.group.set_max_velocity_scaling_factor(.25)
         self.end_joint_states = self.group.get_current_joint_values()
-        self.end_joint_states[0] = -1.57691
+        self.end_joint_states[0] = 1.57691*3
         self.end_joint_states[1] = -1.71667
         self.end_joint_states[2] = 1.79266
         self.end_joint_states[3] = -1.67721
-        self.end_joint_states[4] = -1.5705
+        self.end_joint_states[4] = -1.95
         self.end_joint_states[5] = 0.0
 
         self.group.set_joint_value_target(self.end_joint_states)
 
         # Set the internal state to the current state
-        #self.group.set_start_state_to_current_state()
+        # self.group.set_start_state_to_current_state()
         plan = self.group.plan()
 
-        self.group.execute(plan, wait=True)
+        self.group.execute(plan)
 
     def reset_pose(self):
         # joint_goal = [0, 0, 0, 0, 0, pi/2]
@@ -163,20 +177,20 @@ class Kinematics(object):
 
 
 def controller_client():
-  rospy.wait_for_service('controller')
-  try:
-    control = rospy.ServiceProxy('controller', controller)
-    resp = control()
-    print('in kinematics client')
-    return resp.Xo, resp.Yo, resp.Zo
-  except rospy.ServiceException as e:
-    print("Service call failed: %s"%e)
-  
+    rospy.wait_for_service('controller')
+    try:
+        control = rospy.ServiceProxy('controller', controller)
+        resp = control()
+        print('in kinematics client')
+        return resp.Xo, resp.Yo, resp.Zo
+    except rospy.ServiceException as e:
+        print("Service call failed: %s" % e)
+
 
 def main():
     rospy.init_node('Kinematics_client', anonymous=True)
 
-    x,y,z = controller_client()
+    x, y, z = controller_client()
     print(x)
     print(y)
     print(z)
@@ -185,7 +199,6 @@ def main():
     kinematics = Kinematics()
 
     #gripper_pub = rospy.Publisher('Gripper', Bool, queue_size=1)
-
 
     print('demonstrating kinematics...')
     rospy.sleep(3)
@@ -205,39 +218,41 @@ def main():
 
         wpose.position.x = X
         wpose.position.y = Y
-        wpose.position.z = 0.04 # height of box relative to world 
+        wpose.position.z = 0.04  # height of box relative to world
 
         waypoints.append(deepcopy(wpose))
 
         plan, fraction = kinematics.plan_cartesian_path(waypoints)
 
         kinematics.execute_plan(plan)
-        print("Planning")
-        # move to pick up:
-        #rospy.sleep(1)
-        # gripper on
-        kinematics.gripper_pub.publish(False)
+
         kinematics.gripper_pub.publish(True)
+
+        # kinematics.group.set_joint_value_target(kinematics.transition_pose)
+        # kinematics.group.set_start_state_to_current_state()
+        # plan = kinematics.group.plan()
+        # kinematics.group.execute(plan)
+
         wpose.position.z += 0.068
         waypoints.append(deepcopy(wpose))
         plan, fraction = kinematics.plan_cartesian_path(waypoints)
         kinematics.execute_plan(plan)
-        print('planning 2')
-        #go to place : 
+
+        # go to place :
         rospy.sleep(3)
         kinematics.go_to_place()
         # rospy.sleep(6)
-        # kinematics.gripper_pub.publish(False)
+        kinematics.gripper_pub.publish(False)
         rospy.sleep(1)
 
     print('Done!')
-    
+
 
 if __name__ == '__main__':
-  try:
-    main()
-    rospy.spin()
-  except rospy.ROSInterruptException:
-    pass
-  except KeyboardInterrupt:
-    pass
+    try:
+        main()
+        rospy.spin()
+    except rospy.ROSInterruptException:
+        pass
+    except KeyboardInterrupt:
+        pass

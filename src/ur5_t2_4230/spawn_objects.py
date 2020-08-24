@@ -27,13 +27,16 @@ class Static_Object(object):
     # def __del__(self):
     #     self.delete_model(self.node_name)
 
+
 class URDF_Object(Static_Object):
     spawn_model = rospy.ServiceProxy("gazebo/spawn_urdf_model", SpawnModel)
     extension = '.urdf'
 
+
 class SDF_Object(Static_Object):
     spawn_model = rospy.ServiceProxy("gazebo/spawn_sdf_model", SpawnModel)
     extension = '.sdf'
+
 
 class Random_Grid(object):
     def __init__(self, cols, rows, origin, offset):
@@ -56,8 +59,10 @@ class Random_Grid(object):
             raise Exception("TOO MANY OBJECTS")
         return self.unused_coordinates.pop()
 
+
 def np_to_point(np_array):
     return Point(np_array[0], np_array[1], np_array[2])
+
 
 def main():
     print("Waiting for gazebo services...")
@@ -69,20 +74,21 @@ def main():
     input_container_y = 0.7
     container_orientation = Quaternion(0, 1, 0, -1)
     input_container_point = Point(0.2, input_container_y, 0.1)
-    output_container_point = Point(0.2, -input_container_y+0.2, 0.1)
+    output_container_point = Point(-input_container_y-0.2, 0.0, 0.1)
 
-    #input_container = SDF_Object('input_container', 'input_container', 
+    # input_container = SDF_Object('input_container', 'input_container',
     #   input_container_point, container_orientation)
-    output_container = SDF_Object('output_container', 'output_container', 
-        output_container_point, container_orientation)
+    output_container = SDF_Object('output_container', 'output_container',
+                                  output_container_point, container_orientation)
 
-    object_list = ['red_box']#, 'green_box', 'blue_box',
-                   #'red_cylinder', 'green_cylinder', 'blue_cylinder']
+    object_list = ['red_box']  # , 'green_box', 'blue_box',
+    # 'red_cylinder', 'green_cylinder', 'blue_cylinder']
 
     products = []
 
     origin = numpy.array([0, input_container_y, 0.1])
-    offset = numpy.array([0.13, 0.25, 0]) # offset in terms of container internal walls
+    # offset in terms of container internal walls
+    offset = numpy.array([0.13, 0.25, 0])
 
     # actually the other way around swap row
     rand_grid = Random_Grid(5, 7, origin, offset)
@@ -91,9 +97,10 @@ def main():
     for i in range(num_products):
         products.append(URDF_Object(
             '_ProductNum ' + str(i),
-            random.choice(object_list), 
+            random.choice(object_list),
             rand_grid()
         ))
+
 
 if __name__ == '__main__':
     try:

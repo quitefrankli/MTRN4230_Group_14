@@ -46,8 +46,14 @@ class Kinematics(object):
 
         self.group.allow_replanning(True)
 
+        # Set the reference frame for pose targets
+        reference_frame = "/world"
+
+        # Set the ur5_arm reference frame accordingly
+        self.group.set_pose_reference_frame(reference_frame)
+
         # We can get the name of the reference frame for this robot:
-        self.planning_frame = self.group.get_planning_frame()
+        #self.planning_frame = self.group.get_planning_frame()
 
         self.default_joint_states = self.group.get_current_joint_values()
         self.default_joint_states[0] = 1.57691
@@ -60,6 +66,8 @@ class Kinematics(object):
         # Allow some leeway in position (meters) and orientation (radians)
         self.group.set_goal_position_tolerance(0.01)
         self.group.set_goal_orientation_tolerance(0.1)
+        self.group.set_max_acceleration_scaling_factor(.15)
+        self.group.set_max_velocity_scaling_factor(.25)
         self.transition_pose = deepcopy(self.default_joint_states)
 
         self.transition_pose[4] = -1.95
@@ -84,8 +92,8 @@ class Kinematics(object):
         self.group.execute(plan, wait=True)
 
     def go_to_place(self):
-        self.group.set_max_acceleration_scaling_factor(.15)
-        self.group.set_max_velocity_scaling_factor(.25)
+        self.group.set_max_acceleration_scaling_factor(.05)
+        self.group.set_max_velocity_scaling_factor(.15)
         self.end_joint_states = self.group.get_current_joint_values()
         self.end_joint_states[0] = 1.57691*2
         self.end_joint_states[1] = -1.71667
@@ -216,26 +224,22 @@ def main():
 
         wpose.position.x = X
         wpose.position.y = Y
-        wpose.position.z = 0.04  # height of box relative to world
+        wpose.position.z = -0.05  # height of box relative to world
 
         waypoints.append(deepcopy(wpose))
 
         plan, fraction = kinematics.plan_cartesian_path(waypoints)
 
         kinematics.execute_plan(plan)
-
+        
         kinematics.gripper_pub.publish(True)
-
-        # kinematics.group.set_joint_value_target(kinematics.transition_pose)
-        # kinematics.group.set_start_state_to_current_state()
-        # plan = kinematics.group.plan()
-        # kinematics.group.execute(plan)
-
-        wpose.position.z += 0.068
+        rospy.sleep(1)
+        wpose.position.z += 0.07
         waypoints.append(deepcopy(wpose))
+        kinematics.group.set_start_state_to_current_state()
         plan, fraction = kinematics.plan_cartesian_path(waypoints)
         kinematics.execute_plan(plan)
-
+        #kinematics.go_to_idle()
         # go to place :
         rospy.sleep(3)
         kinematics.go_to_place()

@@ -30,7 +30,7 @@ def find_objects(original_image):
     np.array([0, 250, 250]), 
     np.array([125, 255, 255])
   )
-
+  print('mask', mask)
   #
   # Processing
   #

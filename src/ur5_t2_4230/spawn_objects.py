@@ -74,26 +74,26 @@ def main():
     input_container_y = 0.7
     container_orientation = Quaternion(0, 1, 0, -1)
     input_container_point = Point(0.2, input_container_y, 0.1)
-    output_container_point = Point(-input_container_y-0.2, 0.0, 0.1)
+    output_container_point = Point(-0.325, 0.0, 0.1)
 
     # input_container = SDF_Object('input_container', 'input_container',
     #   input_container_point, container_orientation)
     output_container = SDF_Object('output_container', 'output_container',
                                   output_container_point, container_orientation)
 
-    object_list = ['red_box']  # , 'green_box', 'blue_box',
-    # 'red_cylinder', 'green_cylinder', 'blue_cylinder']
+    object_list = ['red_box'   , 'green_box', 'blue_box',
+     'red_cylinder', 'green_cylinder', 'blue_cylinder']
 
     products = []
 
     origin = numpy.array([0, input_container_y, 0.1])
     # offset in terms of container internal walls
-    offset = numpy.array([0.13, 0.25, 0])
+    offset = numpy.array([0.13, 0.2, 0])
 
     # actually the other way around swap row
-    rand_grid = Random_Grid(5, 7, origin, offset)
+    rand_grid = Random_Grid(4, 4, origin, offset)
 
-    num_products = 5
+    num_products = 12
     for i in range(num_products):
         products.append(URDF_Object(
             '_ProductNum ' + str(i),

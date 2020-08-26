@@ -72,7 +72,7 @@ def main():
     input_container_y = 0.7
     container_orientation = Quaternion(0, 1, 0, -1)
     input_container_point = Point(0.2, input_container_y, 0.1)
-    output_container_point = Point(-0.325, 0.0, 0.1)
+    output_container_point = Point(-0.25, 0.0, 0.1)
 
     SDF_Object('input_container', 'input_container',
                input_container_point, container_orientation)

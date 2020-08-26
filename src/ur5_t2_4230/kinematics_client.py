@@ -224,7 +224,7 @@ def main():
         
         kinematics.go_to_place()
         kinematics.gripper_pub.publish(False)
-        rospy.sleep(1)
+        rospy.sleep(2)
 
     print('Done!')
 

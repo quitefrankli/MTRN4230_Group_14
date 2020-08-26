@@ -25,9 +25,6 @@ class Static_Object(object):
             self.spawn_model(node_name, xml, '', Pose(point, orient), 'world')
         self.node_name = node_name
 
-    # def __del__(self):
-    #     self.delete_model(self.node_name)
-
 
 class URDF_Object(Static_Object):
     spawn_model = rospy.ServiceProxy("gazebo/spawn_urdf_model", SpawnModel)
@@ -82,8 +79,8 @@ def main():
     SDF_Object('output_container', 'output_container',
                output_container_point, container_orientation)
 
-    object_list = ['red_box']  # , 'green_box', 'blue_box',
-#                   'red_cylinder', 'green_cylinder', 'blue_cylinder']
+    object_list = ['red_box', 'green_box', 'blue_box',
+                   'red_cylinder', 'green_cylinder', 'blue_cylinder']
 
     products = []
 
@@ -94,7 +91,7 @@ def main():
     # actually the other way around swap row
     rand_grid = Random_Grid(4, 4, origin, offset)
 
-    num_products = 12
+    num_products = 11
     for i in range(num_products):
         products.append(URDF_Object(
             '_ProductNum ' + str(i),

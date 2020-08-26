@@ -6,8 +6,7 @@ import rospy, sys, numpy as np
 import geometry_msgs.msg
 import moveit_msgs.msg
 #from ur5_notebook.msg import Tracker
-from std_msgs.msg import Header
-from std_msgs.msg import Bool
+from std_msgs.msg import Header, Bool, String
 from std_srvs.srv import Empty
 
 def gripper_status(msg):
@@ -208,7 +207,6 @@ def gripper8_off():
 def trigger(data):
     flag = data.data
     if flag:
-        print('ON')
         gripper_on()
         gripper1_on()
         gripper2_on()
@@ -220,7 +218,6 @@ def trigger(data):
         gripper8_on()
 
     else:
-        print('OFF')
         gripper_off()
         gripper1_off()
         gripper2_off()
@@ -230,14 +227,11 @@ def trigger(data):
         gripper6_off()
         gripper7_off()
         gripper8_off()
-    print("in callback {}".format(data.data))
+
        
 
 if __name__ == '__main__':
     rospy.init_node("ur5_gripper", anonymous=False)
-
-    #gripper_status_sub = rospy.Subscriber('/ur5/vacuum_gripper/grasping', Bool, gripper_status, queue_size=1)
-
-    gripper_sub = rospy.Subscriber('Gripper', Bool, trigger, queue_size=1)
-
+    rospy.Subscriber('Gripper', Bool, trigger, queue_size=1)
+    rospy.Subscriber('ui_exit', String, lambda msg: rospy.signal_shutdown("Exit ur5_gripper"), queue_size=1)
     rospy.spin()

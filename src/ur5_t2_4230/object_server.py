@@ -32,7 +32,6 @@ def find_objects(original_image):
         np.array([0, 99, 0]), 
         np.array([255, 255, 175])
     )
-    print('mask', mask)
     #
     # Processing
     #
@@ -99,7 +98,7 @@ def find_objects(original_image):
             (color+' '+name, global_center[0], global_center[1]))
 
     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    plt.pause(0.01)
+    plt.show()
 
     return spawned_objects
 
@@ -152,11 +151,14 @@ def service_callback(req):
 
     return object_detectionResponse(X, Y, st)
 
+def exit_callback(msg):
+    # plt.close('all')
+    rospy.signal_shutdown("Exit object server")
 
 def main(args):
     rospy.init_node('object_detection_server')
-    s = rospy.Service('object_detection', object_detection, service_callback)
-    print("In object_detection_server")
+    rospy.Service('object_detection', object_detection, service_callback)
+    rospy.Subscriber('ui_exit', String, exit_callback, queue_size=1)
     rospy.spin()
 
 

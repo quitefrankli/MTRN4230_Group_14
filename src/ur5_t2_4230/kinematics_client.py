@@ -190,8 +190,6 @@ def controller_client():
 
 
 def main():
-    rospy.init_node('Kinematics_client', anonymous=True)
-
     x, y, z = controller_client()
     print(x)
     print(y)
@@ -200,34 +198,22 @@ def main():
     # create class obj
     kinematics = Kinematics()
 
-    #gripper_pub = rospy.Publisher('Gripper', Bool, queue_size=1)
-
-    print('demonstrating kinematics...')
-    rospy.sleep(3)
-
     for i in range(len(x)):
         X = x[i]
         Y = y[i]
-        Z = z
-
+        Z = -0.03  # height of box relative to world
         kinematics.go_to_idle()
         rospy.sleep(1)
-
         start_pose = kinematics.group.get_current_pose().pose
         # Append the pose to the waypoints list
         wpose = deepcopy(start_pose)
         waypoints = []
-
         wpose.position.x = X
         wpose.position.y = Y
-        wpose.position.z = -0.03  # height of box relative to world
-
+        wpose.position.z = Z
         waypoints.append(deepcopy(wpose))
-
         plan, _ = kinematics.plan_cartesian_path(waypoints)
-
         kinematics.execute_plan(plan)
-
         kinematics.gripper_pub.publish(True)
         rospy.sleep(1)
         wpose.position.z += 0.07
@@ -235,11 +221,8 @@ def main():
         kinematics.group.set_start_state_to_current_state()
         plan, _ = kinematics.plan_cartesian_path(waypoints)
         kinematics.execute_plan(plan)
-        # kinematics.go_to_idle()
-        # go to place :
-        rospy.sleep(3)
+        
         kinematics.go_to_place()
-        # rospy.sleep(6)
         kinematics.gripper_pub.publish(False)
         rospy.sleep(1)
 
@@ -248,8 +231,11 @@ def main():
 
 if __name__ == '__main__':
     try:
+        rospy.init_node('Kinematics_client', anonymous=True) 
+        pub = rospy.Publisher('ui_exit', String, queue_size=1)
         main()
-        rospy.spin()
+        rospy.sleep(5)
+        pub.publish("good bye")
     except rospy.ROSInterruptException:
         pass
     except KeyboardInterrupt:

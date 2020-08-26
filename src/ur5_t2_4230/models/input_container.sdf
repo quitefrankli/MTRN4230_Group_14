@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <sdf version='1.6'>
-  <model name='input_container2'>
+  <model name='input_container'>
     <link name='base'>
       <pose frame=''>0 0 0.024 0 -0 0</pose>
       <inertial>
@@ -28,7 +28,7 @@
         <material>
           <script>
             <uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Black</name>
+            <name>Gazebo/White</name>
           </script>
           <shader type='pixel'>
             <normal_map>__default__</normal_map>
@@ -51,7 +51,7 @@
         <material>
           <script>
             <uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Black</name>
+            <name>Gazebo/White</name>
           </script>
           <shader type='pixel'>
             <normal_map>__default__</normal_map>
@@ -74,7 +74,7 @@
         <material>
           <script>
             <uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Black</name>
+            <name>Gazebo/White</name>
           </script>
           <shader type='pixel'>
             <normal_map>__default__</normal_map>
@@ -97,7 +97,7 @@
         <material>
           <script>
             <uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Black</name>
+            <name>Gazebo/White</name>
           </script>
           <shader type='pixel'>
             <normal_map>__default__</normal_map>
@@ -120,7 +120,7 @@
         <material>
           <script>
             <uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Black</name>
+            <name>Gazebo/White</name>
           </script>
           <shader type='pixel'>
             <normal_map>__default__</normal_map>
@@ -188,13 +188,13 @@
           </contact>
         </surface>
       </collision>
-      <collision name='collision_top'>
+      <!-- <collision name='collision_top'>
         <laser_retro>0</laser_retro>
         <max_contacts>10</max_contacts>
         <pose frame=''>-0.022 0 0.446075 0 -0 0</pose>
         <geometry>
           <box>
-            <size>0.069805 0.684607 0.043864</size>
+            <size>0.04 0.684607 0.043864</size>
           </box>
         </geometry>
         <surface>
@@ -249,7 +249,7 @@
         <pose frame=''>-0.022 0 -0.090475 0 -0 0</pose>
         <geometry>
           <box>
-            <size>0.069805 0.684607 0.043864</size>
+            <size>0.04 0.684607 0.043864</size>
           </box>
         </geometry>
         <surface>
@@ -304,7 +304,7 @@
         <pose frame=''>-0.022 -0.262575 0.1778 0 -0 0</pose>
         <geometry>
           <box>
-            <size>0.069807 0.023125 0.622181</size>
+            <size>0.04 0.023125 0.622181</size>
           </box>
         </geometry>
         <surface>
@@ -359,7 +359,7 @@
         <pose frame=''>-0.022 0.262575 0.1778 0 -0 0</pose>
         <geometry>
           <box>
-            <size>0.069807 0.023125 0.622181</size>
+            <size>0.04 0.023125 0.622181</size>
           </box>
         </geometry>
         <surface>
@@ -407,7 +407,7 @@
             </bullet>
           </contact>
         </surface>
-      </collision>
+      </collision> -->
     </link>
     <static>0</static>
     <allow_auto_disable>1</allow_auto_disable>

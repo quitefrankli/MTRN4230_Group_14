@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 
-from object_detection import colour_image_converter
-import roslib
 import sys
-import rospy
+from exceptions import *
+
 import cv2
 import numpy as np
-from std_msgs.msg import String
-from sensor_msgs.msg import Image
+import roslib
+import rospy
 from cv_bridge import CvBridge, CvBridgeError
+from sensor_msgs.msg import Image
+from std_msgs.msg import String
 from ur5_t2_4230.srv import *
-from exceptions import *
+
+from object_detection import colour_image_converter
 
 
 def UI():
@@ -52,7 +54,7 @@ def objectCoor():
     try:
         detect = rospy.ServiceProxy('object_detection', object_detection)
         resp = detect()
-        print('in detect proxy')
+
         result_dict = {}
         for i, obj_name in enumerate(resp.st):
             if obj_name not in result_dict.keys():
@@ -75,7 +77,8 @@ def controller_service_callback(req):
 
 def controller_server():
     rospy.init_node('controller_server')
-    s = rospy.Service('controller', controller, controller_service_callback)
+    rospy.Service('controller', controller, controller_service_callback)
+    rospy.Subscriber('ui_exit', String, lambda msg: rospy.signal_shutdown("Exit controller"), queue_size=1)
     print("In controller service")
     rospy.spin()
 

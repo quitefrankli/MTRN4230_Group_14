@@ -1,27 +1,23 @@
 #!/usr/bin/env python
 
 import sys
-import copy
-import rospy
-import moveit_commander
-import moveit_msgs.msg
-import geometry_msgs.msg
-from geometry_msgs.msg import Pose, Quaternion, Point
-from math import pi
-from std_msgs.msg import String, Bool
-from moveit_commander.conversions import pose_to_list
 from copy import deepcopy
-import numpy as np
-from std_msgs.msg import Header
-from trajectory_msgs.msg import JointTrajectory
-from tf.transformations import quaternion_from_euler
-import rospy
-import sys
+from math import pi
+
+import geometry_msgs.msg
 import moveit_commander
 import moveit_msgs.msg
-import geometry_msgs.msg
+import numpy as np
+import rospy
+from geometry_msgs.msg import Point, Pose, Quaternion
+from moveit_commander.conversions import pose_to_list
+from std_msgs.msg import Bool, Header, String
+from tf.transformations import quaternion_from_euler
+from trajectory_msgs.msg import JointTrajectory
 from ur5_t2_4230.srv import *
+
 from ur5_gripper import trigger
+
 # from moveit_commander import plan
 
 
@@ -224,22 +220,22 @@ def main():
 
         wpose.position.x = X
         wpose.position.y = Y
-        wpose.position.z = -0.05  # height of box relative to world
+        wpose.position.z = -0.03  # height of box relative to world
 
         waypoints.append(deepcopy(wpose))
 
-        plan, fraction = kinematics.plan_cartesian_path(waypoints)
+        plan, _ = kinematics.plan_cartesian_path(waypoints)
 
         kinematics.execute_plan(plan)
-        
+
         kinematics.gripper_pub.publish(True)
         rospy.sleep(1)
         wpose.position.z += 0.07
         waypoints.append(deepcopy(wpose))
         kinematics.group.set_start_state_to_current_state()
-        plan, fraction = kinematics.plan_cartesian_path(waypoints)
+        plan, _ = kinematics.plan_cartesian_path(waypoints)
         kinematics.execute_plan(plan)
-        #kinematics.go_to_idle()
+        # kinematics.go_to_idle()
         # go to place :
         rospy.sleep(3)
         kinematics.go_to_place()

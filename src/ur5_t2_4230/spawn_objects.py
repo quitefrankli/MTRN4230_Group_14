@@ -4,13 +4,14 @@
 # Description:
 #   Spawns objects
 
-import tf
-import rospy
 import random
-from std_msgs.msg import String
-from gazebo_msgs.srv import SpawnModel, DeleteModel
-from geometry_msgs.msg import Pose, Point, Quaternion
+
 import numpy
+import rospy
+import tf
+from gazebo_msgs.srv import DeleteModel, SpawnModel
+from geometry_msgs.msg import Point, Pose, Quaternion
+from std_msgs.msg import String
 
 
 class Static_Object(object):
@@ -76,13 +77,13 @@ def main():
     input_container_point = Point(0.2, input_container_y, 0.1)
     output_container_point = Point(-0.325, 0.0, 0.1)
 
-    # input_container = SDF_Object('input_container', 'input_container',
-    #   input_container_point, container_orientation)
-    output_container = SDF_Object('output_container', 'output_container',
-                                  output_container_point, container_orientation)
+    SDF_Object('input_container', 'input_container',
+               input_container_point, container_orientation)
+    SDF_Object('output_container', 'output_container',
+               output_container_point, container_orientation)
 
-    object_list = ['red_box'   , 'green_box', 'blue_box',
-     'red_cylinder', 'green_cylinder', 'blue_cylinder']
+    object_list = ['red_box']  # , 'green_box', 'blue_box',
+#                   'red_cylinder', 'green_cylinder', 'blue_cylinder']
 
     products = []
 

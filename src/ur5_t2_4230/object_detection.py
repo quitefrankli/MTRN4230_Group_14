@@ -23,8 +23,8 @@ def find_objects(original_image):
   # filter out anything that isn't of interest
   mask = cv2.inRange(
     cv2.cvtColor(image, cv2.COLOR_BGR2HSV), 
-    np.array([0, 250, 250]), 
-    np.array([125, 255, 255])
+    np.array([0, 99, 0]), 
+    np.array([255, 255, 175])
   )
 
   #
@@ -54,9 +54,9 @@ def find_objects(original_image):
 
     # gets the color
     color = image[center[1], center[0]]
-    if color[0] > 240:
+    if color[0] > 150:
       color = 'blue'
-    elif color[1] > 240:
+    elif color[1] > 150:
       color = 'green'
     else:
       color = 'red'
@@ -86,7 +86,7 @@ def find_objects(original_image):
     print(color, name, 'at', global_center)
 
   cv2.imshow('image', image)
-  cv2.waitKey(0)
+  cv2.waitKey(2)
 
 class colour_image_converter:
   def __init__(self):

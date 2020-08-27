@@ -183,7 +183,6 @@ def controller_client():
     try:
         control = rospy.ServiceProxy('controller', controller)
         resp = control()
-        print('in kinematics client')
         return resp.Xo, resp.Yo, resp.Zo
     except rospy.ServiceException as e:
         print("Service call failed: %s" % e)
@@ -191,9 +190,6 @@ def controller_client():
 
 def main():
     x, y, z = controller_client()
-    print(x)
-    print(y)
-    print(z)
 
     # create class obj
     kinematics = Kinematics()

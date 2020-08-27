@@ -7,9 +7,8 @@ import numpy as np
 import roslib
 import rospy
 from cv_bridge import CvBridge, CvBridgeError
-#from spawn_objects import URDF_Object, get_random_string, spawn_products
+
 from geometry_msgs.msg import Point
-from matplotlib import pyplot as plt
 from sensor_msgs.msg import Image
 from std_msgs.msg import String
 from ur5_t2_4230.srv import object_detection, object_detectionResponse
@@ -92,13 +91,10 @@ def find_objects(original_image):
         global_center = np.array([-offset[1], -offset[0]]) \
             + container_global_center  # global x, y
 
-        print(color, name, 'at', global_center)
+        print(color, name, '@', global_center)
 
         spawned_objects.append(
             (color+' '+name, global_center[0], global_center[1]))
-
-    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    plt.show()
 
     return spawned_objects
 

@@ -101,10 +101,6 @@ def get_object_coor_dict():
 
 def controller_service_callback(req):
     x, y, z = UI()
-    print('x')
-    print(x)
-    print('y')
-    print(y)
     return controllerResponse(x, y, z)
 
 

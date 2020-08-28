@@ -6,13 +6,13 @@
 
 ## Environment
 * Preliminary basic environment 1 input container, 1 output container and 14 objects\
-![](environment.png)
+![](updated_environment.png){:class="img-responsive"}
 
 * Interface snapshot\
-![](interface.png)
+![](interface.png){:class="img-responsive"}
 
 * Pick and place\
-![](pick_and_place.png)
+![](pick_and_place.png){:class="img-responsive"}
 
 ## Installation and Running
 1. `git clone https://github.com/quitefrankli/MTRN4230_Group_14`

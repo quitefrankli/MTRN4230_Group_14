@@ -71,13 +71,6 @@ class Kinematics(object):
         self.go_to_idle()
 
     def go_to_idle(self):
-        # self.default_joint_states = self.group.get_current_joint_values()
-        # self.default_joint_states[0] = 1.57691
-        # self.default_joint_states[1] = -1.71667
-        # self.default_joint_states[2] = 1.79266
-        # self.default_joint_states[3] = -1.67721
-        # self.default_joint_states[4] = -1.5705
-        # self.default_joint_states[5] = 0.0
 
         self.group.set_joint_value_target(self.default_joint_states)
 
@@ -231,7 +224,7 @@ if __name__ == '__main__':
         pub = rospy.Publisher('ui_exit', String, queue_size=1)
         main()
         rospy.sleep(5)
-        pub.publish("good bye")
+        pub.publish("done")
     except rospy.ROSInterruptException:
         pass
     except KeyboardInterrupt:

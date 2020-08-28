@@ -91,7 +91,7 @@ def main():
     # actually the other way around swap row
     rand_grid = Random_Grid(4, 4, origin, offset)
 
-    num_products = 11
+    num_products = 14
     for i in range(num_products):
         products.append(URDF_Object(
             '_ProductNum ' + str(i),

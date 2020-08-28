@@ -51,6 +51,4 @@
 		<arg name="debug" default="$(arg debug)" />
 	</include>
 
-	<node name="run_once" pkg="ur5_t2_4230" type="run_once.py" output="screen"/>
-
 </launch>

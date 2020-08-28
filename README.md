@@ -4,32 +4,20 @@
 ## Required Additional Library
 * `pip install opencv-python`
 
-## Current Status
-* Preliminary basic environment 1 input container, 1 output container and 10 objects
+## Environment
+* Preliminary basic environment 1 input container, 1 output container and 14 objects\
 ![](environment.png)
 
-* Object localisation and classification from robot camera
-![](object_localisation_and_classification.png)
+* Interface snapshot\
+![](interface.png)
 
-* Basic kinematics
+* Pick and place\
+![](pick_and_place.png)
 
 ## Installation and Running
 1. `git clone https://github.com/quitefrankli/MTRN4230_Group_14`
 2. `cd MTRN4230_Group_14`
 3. `catkin_make`
 4. `source devel/setup.bash`
-5. `roslaunch ur5_t2_4230 ur5_world.launch`
-
-### For basic motion
-* `python src/ur5_t2_4230/planning_scene.py`
-* `python src/ur5_t2_4230/kinematics.py`
-* if robot collides with something and gets stuck ---> `python src/ur5_t2_4230/planning_scene.py` `python src/ur5_t2_4230/testmotion.py`
-
-### For object detection
-* `python src/ur5_t2_4230/object_detection.py`
-
-### To run services and clients
-1) `roslaunch ur5_t2_4230 ur5_world.launch`
-2) `rosrun ur5_t2_4230 service.py` (It included object_detection.py so no need to run that file)
-3) `rosrun ur5_t2_4230 controller.py`
-4) `rosrun ur5_t2_4230 kinematics_client.py`
+5. `roslaunch ur5_t2_4230 ur5_world.launch` This will launch Gazebo and spawn objects
+6. `roslaunch ur5_t2_4230 actions.launch` This will launch interface

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<launch>
+<node name="object_server" pkg="ur5_t2_4230" type="object_server.py" output="screen"/>
+<node name="controller" pkg="ur5_t2_4230" type="controller.py" output="screen"/>
+<node name="ur5_gripper" pkg="ur5_t2_4230" type="ur5_gripper.py" output="screen"/>
+<node name="kinematics_client" pkg="ur5_t2_4230" type="kinematics_client.py" output="screen"/>
+</launch>

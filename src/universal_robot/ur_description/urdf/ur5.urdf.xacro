@@ -79,7 +79,7 @@
 
 
   <xacro:macro name="ur5_robot" params="prefix joint_limited
-     shoulder_pan_lower_limit:=${-pi}    shoulder_pan_upper_limit:=${pi}
+     shoulder_pan_lower_limit:=${-2*pi}    shoulder_pan_upper_limit:=${2*pi}
      shoulder_lift_lower_limit:=${-pi}    shoulder_lift_upper_limit:=${pi}
      elbow_joint_lower_limit:=${-pi}    elbow_joint_upper_limit:=${pi}
      wrist_1_lower_limit:=${-pi}    wrist_1_upper_limit:=${pi}
@@ -693,13 +693,13 @@
 	<box size="${camera_link} ${camera_link} ${camera_link}"/>
       </geometry>
     </collision>
-    <visual>
+    <!-- <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
 	<box size="${camera_link} ${camera_link} ${camera_link}"/>
       </geometry>
       <material name="green"/>
-    </visual>
+    </visual> -->
 
     <inertial>
       <mass value="1e-5" />
